@@ -1,60 +1,46 @@
+import javafx.util.Pair;
+
 import java.util.ArrayList;
 import java.util.List;
 
-//class TreeNode {
-//    int val;
-//    TreeNode left;
-//    TreeNode right;
-//    TreeNode() {}
-//    TreeNode(int val) { this.val = val; }
-//    TreeNode(int val, TreeNode left, TreeNode right) {
-//        this.val = val;
-//        this.left = left;
-//        this.right = right;
-//    }
-// }
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode() {}
+    TreeNode(int val) { this.val = val; }
+    TreeNode(int val, TreeNode left, TreeNode right) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
+ }
 
 
 class Solution {
-    public List<Integer> findClosestElements(int[] arr, int k, int x) {
-        List<Integer> ans = new ArrayList<>();
-        if (x<=arr[0]) {
-            for (int i=0;i<k;i++) {
-                ans.add(arr[i]);
+    public static int widthOfBinaryTree(TreeNode root) {
+        List<Pair<TreeNode,Integer>> list = new ArrayList<>();
+        list.add(new Pair<>(root,1));
+        int ans=0;
+        while (!list.isEmpty()) {
+            List<Pair<TreeNode,Integer>> tmp = new ArrayList<>();
+            for (Pair<TreeNode,Integer> pair:list) {
+                TreeNode node = pair.getKey();
+                int index = pair.getValue();
+                if (node.left != null) {
+                    tmp.add(new Pair<>(node.left,2*index));
+                }
+                if (node.right != null) {
+                    tmp.add(new Pair<>(node.right,2*index+1));
+                }
             }
-            return ans;
-        }
-        int right = findRight(arr,x);
-        int left = right - 1;
-        while (k-->0) {
-            if (right >= arr.length) {
-                left--;
-            } else if (left < 0) {
-                right++;
-            } else if (arr[right]-x >= x-arr[left]) {
-                left--;
-            } else {
-                right++;
-            }
-        }
-
-
-        for (int i=left+1;i<right;i++) {
-            ans.add(arr[i]);
+            ans = Math.max(ans,list.get(list.size()-1).getValue()-list.get(0).getValue()+1);
+            list = tmp;
         }
         return ans;
     }
 
-    public int findRight(int[] example,int x) {
-        int left = 0,right = example.length-1;
-        while (left<right) {
-            int mid = left + (right-left)/2;
-            if (example[mid] >= x) {
-                right = mid;
-            } else {
-                left = mid+1;
-            }
-        }
-        return left;
+    public static void main(String[] args) {
+        widthOfBinaryTree(new TreeNode(1,new TreeNode(3,new TreeNode(5),null),new TreeNode()));
     }
 }
